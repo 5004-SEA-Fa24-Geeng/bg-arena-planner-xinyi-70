@@ -6,9 +6,9 @@ import java.util.Comparator;
  * Provides comparators for sorting BoardGame objects.
  * Implements the strategy pattern for sorting.
  */
-public class GameSorter {
+public final class GameSorter {
     // Private constructor to prevent instantiation of utility class
-    private GameSorter() {}
+    private GameSorter() { }
 
     /**
      * Creates a comparator for sorting filtered games.
