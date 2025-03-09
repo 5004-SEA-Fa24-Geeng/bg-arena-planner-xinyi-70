@@ -7,11 +7,13 @@ import java.util.Comparator;
  * Implements the strategy pattern for sorting.
  */
 public class GameSorter {
+    // Private constructor to prevent instantiation of utility class
+    private GameSorter() {}
 
     /**
      * Creates a comparator for sorting filtered games.
      *
-     * @param sortOn The column to sort on
+     * @param sortOn    The column to sort on
      * @param ascending Whether to sort in ascending order
      * @return A comparator for sorting games
      */
