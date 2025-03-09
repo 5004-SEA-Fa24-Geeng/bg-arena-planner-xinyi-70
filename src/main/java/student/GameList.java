@@ -1,52 +1,222 @@
 package student;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Stream;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Comparator;
+
 
 public class GameList implements IGameList {
+    /** The set of games in the list. */
+    private final Set<BoardGame> listOfGames;
 
     /**
      * Constructor for the GameList.
      */
     public GameList() {
-        throw new UnsupportedOperationException("Unimplemented constructor 'GameList'");
+        this.listOfGames = new HashSet<>();
     }
 
     @Override
     public List<String> getGameNames() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getGameNames'");
+        return listOfGames.stream()
+                .map(BoardGame::getName)
+                .sorted(String.CASE_INSENSITIVE_ORDER)
+                .collect(Collectors.toList());
+        //List<String> listVersionOfGames = List.copyOf(listOfGames);
+        //return listVersionOfGames;
     }
 
     @Override
     public void clear() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'clear'");
+        listOfGames.clear();
     }
 
     @Override
     public int count() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'count'");
+        return listOfGames.size();
     }
 
     @Override
     public void saveGame(String filename) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'saveGame'");
+        List<String> gameNames = getGameNames();
+        try {
+            java.nio.file.Files.write(java.nio.file.Path.of(filename), gameNames);
+        } catch (java.io.IOException e) {
+            System.err.println("Error writing to file: " + e.getMessage());
+        }
     }
 
     @Override
     public void addToList(String str, Stream<BoardGame> filtered) throws IllegalArgumentException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addToList'");
+        if (str == null || str.trim().isEmpty()) {
+            throw new IllegalArgumentException("Input string cannot be empty");
+        }
+
+        str = str.trim().toLowerCase();
+
+        // Convert filtered stream to list for multiple operations
+        List<BoardGame> filteredList = filtered.toList();
+
+        // If no games found
+        if (filteredList.isEmpty()) {
+            throw new IllegalArgumentException("No games in filtered list");
+        }
+
+        // Check if we need to add all games
+        if (str.equals(ADD_ALL)) {
+            listOfGames.addAll(filteredList);
+            return;
+        }
+
+        // Check if we're adding a range
+        if (str.contains("-")) {
+            addRange(str, filteredList);
+            return;
+        }
+
+        // Try to parse as a number
+        try {
+            int index = Integer.parseInt(str);
+            if (index < 1 || index > filteredList.size()) {
+                throw new IllegalArgumentException("Index out of range: " + index);
+            }
+            listOfGames.add(filteredList.get(index - 1));
+            return;
+        } catch (NumberFormatException e) {
+            // Not a number, try to find by name
+        }
+
+        // Try to find game by name using stream
+        final String gameName = str; // Create a final copy for use in lambda
+        BoardGame matchingGame = filteredList.stream()
+                .filter(game -> game.getName().equalsIgnoreCase(gameName))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Game not found: " + gameName));
+
+        listOfGames.add(matchingGame);
+
+        //list<BoardGame> filteredList = filtered.toList();
+        //BoardGame toAdd = filteredList.get(Integer.parseInt(str));
+        //listOfGames.add(toAdd.getName());
+    }
+
+    /**
+     * Add a range of games to the list.
+     *
+     * @param range The range string (e.g., "1-5")
+     * @param filteredList The list of filtered games
+     * @throws IllegalArgumentException If the range is invalid
+     */
+    private void addRange(String range, List<BoardGame> filteredList) throws IllegalArgumentException {
+        String[] parts = range.split("-");
+        if (parts.length != 2) {
+            throw new IllegalArgumentException("Invalid range format: " + range);
+        }
+
+        try {
+            int start = Integer.parseInt(parts[0]);
+            int end = Integer.parseInt(parts[1]);
+
+            if (start < 1 || start > filteredList.size() || end < 1 || end > filteredList.size()) {
+                throw new IllegalArgumentException("Range out of bounds: " + range);
+            }
+
+            if (start > end) {
+                throw new IllegalArgumentException("Invalid range (start > end): " + range);
+            }
+
+            for (int i = start; i <= end; i++) {
+                listOfGames.add(filteredList.get(i - 1));
+            }
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid range numbers: " + range);
+        }
     }
 
     @Override
     public void removeFromList(String str) throws IllegalArgumentException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'removeFromList'");
+        if (str == null || str.trim().isEmpty()) {
+            throw new IllegalArgumentException("Input string cannot be empty");
+        }
+
+        str = str.trim().toLowerCase();
+
+        // Check if we need to remove all games
+        if (str.equals(ADD_ALL)) {
+            clear();
+            return;
+        }
+
+        // Get the current list of games
+        List<BoardGame> gamesList = new ArrayList<>(listOfGames);
+        gamesList.sort(Comparator.comparing(BoardGame::getName, String.CASE_INSENSITIVE_ORDER));
+
+        // Check if we're removing a range
+        if (str.contains("-")) {
+            removeRange(str, gamesList);
+            return;
+        }
+
+        // Try to parse as a number
+        try {
+            int index = Integer.parseInt(str);
+            if (index < 1 || index > gamesList.size()) {
+                throw new IllegalArgumentException("Index out of range: " + index);
+            }
+            listOfGames.remove(gamesList.get(index - 1));
+            return;
+        } catch (NumberFormatException e) {
+            // Not a number, try to find by name
+        }
+
+        // Try to find game by name using stream
+        final String gameName = str; // Create a final copy for use in lambda
+        BoardGame matchingGame = listOfGames.stream()
+                .filter(game -> game.getName().equalsIgnoreCase(gameName))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Game not found: " + gameName));
+
+        listOfGames.remove(matchingGame);
     }
 
+    /**
+     * Remove a range of games from the list.
+     *
+     * @param range The range string (e.g., "1-5")
+     * @param gamesList The sorted list of games in the current list
+     * @throws IllegalArgumentException If the range is invalid
+     */
+    private void removeRange(String range, List<BoardGame> gamesList) throws IllegalArgumentException {
+        String[] parts = range.split("-");
+        if (parts.length != 2) {
+            throw new IllegalArgumentException("Invalid range format: " + range);
+        }
 
+        try {
+            int start = Integer.parseInt(parts[0]);
+            int end = Integer.parseInt(parts[1]);
+
+            if (start < 1 || start > gamesList.size() || end < 1 || end > gamesList.size()) {
+                throw new IllegalArgumentException("Range out of bounds: " + range);
+            }
+
+            if (start > end) {
+                throw new IllegalArgumentException("Invalid range (start > end): " + range);
+            }
+
+            // Get games to remove using range indices and stream operations
+            List<BoardGame> toRemove = gamesList.stream()
+                    .skip(start - 1)
+                    .limit(end - start + 1)
+                    .collect(Collectors.toList());
+
+            listOfGames.removeAll(toRemove);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid range numbers: " + range);
+        }
+    }
 }

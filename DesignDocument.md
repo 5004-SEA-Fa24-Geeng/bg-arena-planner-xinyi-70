@@ -18,7 +18,159 @@ Provide a class diagram for the provided code as you read through it.  For the c
 
 Create a class diagram for the classes you plan to create. This is your initial design, and it is okay if it changes. Your starting points are the interfaces. 
 
+```mermaid
+classDiagram
+    BGArenaPlanner --> IPlanner: uses
+    BGArenaPlanner --> IGameList: uses
+    BGArenaPlanner --> ConsoleApp: creates
+    BGArenaPlanner --> GamesLoader: uses
 
+    ConsoleApp --> IGameList: uses
+    ConsoleApp --> IPlanner: uses
+
+    GameList ..|> IGameList: implements
+    Planner ..|> IPlanner: implements
+
+    GamesLoader --> BoardGame: creates
+    GamesLoader --> GameData: uses
+    
+    class BGArenaPlanner {
+    -String DEFAULT_COLLECTION
+    -BGArenaPlanner()
+    +main(String[] args)
+    }
+
+    class BoardGame {
+        -String name
+        -int id
+        -int minPlayers
+        -int maxPlayers
+        -int maxPlayTime
+        -int minPlayTime
+        -double difficulty
+        -int rank
+        -double averageRating
+        -int yearPublished
+        +BoardGame(String name, int id, int minPlayers, int maxPlayers, int minPlayTime, int maxPlayTime, double difficulty, int rank, double averageRating, int yearPublished)
+        +getName() String
+        +getId() int
+        +getMinPlayers() int
+        +getMaxPlayers() int
+        +getMaxPlayTime() int
+        +getMinPlayTime() int
+        +getDifficulty() double
+        +getRank() int
+        +getRating() double
+        +getYearPublished() int
+        +toStringWithInfo(GameData col) String
+        +toString() String
+        +equals(Object obj) boolean
+        +hashCode() int
+        +main(String[] args)
+    }
+    
+    class ConsoleApp {
+        -Scanner IN
+        -String DEFAULT_FILENAME
+        -Random RND
+        -Scanner current
+        -IGameList gameList
+        -IPlanner planner
+        +ConsoleApp(IGameList gameList, IPlanner planner)
+        +start() void
+        -randomNumber() void
+        -processHelp() void
+        -processFilter() void
+        -printFilterStream(Stream~BoardGame~ games, GameData sortON) void
+        -processListCommands() void
+        -printCurrentList() void
+        -nextCommand() ConsoleText
+        -remainder() String
+        -getInput(String format, Object... args) String
+        -printOutput(String format, Object... output) void
+        -ConsoleText <<enumeration>>
+    }
+    
+    class GameData {
+        <<enumeration>>
+        NAME
+        ID
+        RATING
+        DIFFICULTY
+        RANK
+        MIN_PLAYERS
+        MAX_PLAYERS
+        MIN_TIME
+        MAX_TIME
+        YEAR
+        -String columnName
+        +GameData(String columnName)
+        +getColumnName() String
+        +fromColumnName(String columnName) GameData
+        +fromString(String name) GameData
+    }
+    
+    class GamesLoader {
+        -String DELIMITER
+        -GamesLoader()
+        +loadGamesFile(String filename) Set~BoardGame~
+        -toBoardGame(String line, Map~GameData,Integer~ columnMap) BoardGame
+        -processHeader(String header) Map~GameData,Integer~
+    }
+    
+    class Operations {
+        <<enumeration>>
+        EQUALS
+        NOT_EQUALS
+        GREATER_THAN
+        LESS_THAN
+        GREATER_THAN_EQUALS
+        LESS_THAN_EQUALS
+        CONTAINS
+        -String operator
+        +Operations(String operator)
+        +getOperator() String
+        +fromOperator(String operator) Operations
+        +getOperatorFromStr(String str) Operations
+    }
+    
+    class IGameList {
+        <<interface>>
+        +String ADD_ALL
+        +getGameNames() List~String~
+        +clear() void
+        +count() int
+        +saveGame(String filename) void
+        +addToList(String str, Stream~BoardGame~ filtered) void
+        +removeFromList(String str) void
+    }
+    
+    class IPlanner {
+        <<interface>>
+        +filter(String filter) Stream~BoardGame~
+        +filter(String filter, GameData sortOn) Stream~BoardGame~
+        +filter(String filter, GameData sortOn, boolean ascending) Stream~BoardGame~
+        +reset() void
+    }
+    
+    class GameList {
+        +GameList()
+        +getGameNames() List~String~
+        +clear() void
+        +count() int
+        +saveGame(String filename) void
+        +addToList(String str, Stream~BoardGame~ filtered) void
+        +removeFromList(String str) void
+    }
+    
+    class Planner {
+        +Planner(Set~BoardGame~ games)
+        +filter(String filter) Stream~BoardGame~
+        +filter(String filter, GameData sortOn) Stream~BoardGame~
+        +filter(String filter, GameData sortOn, boolean ascending) Stream~BoardGame~
+        +reset() void
+    }
+```
 
 
 
@@ -36,8 +188,19 @@ Write a test (in english) that you can picture for the class diagram you have cr
 
 You should feel free to number your brainstorm. 
 
-1. Test 1..
-2. Test 2..
+for GameList:
+1. Test that a new GameList is empty 
+2. Test adding a single game to the list 
+3. Test removing a game from the list
+4. Test that getGameNames() returns names in case-insensitive alphabetical order
+5. Test saving the game list to a file
+
+for Planner:
+6. Test basic filtering (empty string returns all games)
+7. Test filtering by game name with contains operator (~=)
+8. Test filtering by a numeric field 
+9. Test handling multiple filter conditions with comma separators 
+10. Test that reset() clears all filters
 
 
 
@@ -51,8 +214,172 @@ For the final design, you just need to do a single diagram that includes both th
 > [!WARNING]
 > If you resubmit your assignment for manual grading, this is a section that often needs updating. You should double check with every resubmit to make sure it is up to date.
 
+```mermaid
+classDiagram
+    BGArenaPlanner --> IPlanner: uses
+    BGArenaPlanner --> IGameList: uses
+    BGArenaPlanner --> ConsoleApp: creates
+    BGArenaPlanner --> GamesLoader: uses
 
+    ConsoleApp --> IGameList: uses
+    ConsoleApp --> IPlanner: uses
 
+    GameList ..|> IGameList: implements
+    Planner ..|> IPlanner: implements
+    Planner --> GameSorter: uses
+
+    GamesLoader --> BoardGame: creates
+    GamesLoader --> GameData: uses
+    
+    class BGArenaPlanner {
+        -String DEFAULT_COLLECTION
+        -BGArenaPlanner()
+        +main(String[] args)
+    }
+
+    class BoardGame {
+        -String name
+        -int id
+        -int minPlayers
+        -int maxPlayers
+        -int maxPlayTime
+        -int minPlayTime
+        -double difficulty
+        -int rank
+        -double averageRating
+        -int yearPublished
+        +BoardGame(String name, int id, int minPlayers, int maxPlayers, int minPlayTime, int maxPlayTime, double difficulty, int rank, double averageRating, int yearPublished)
+        +getName() String
+        +getId() int
+        +getMinPlayers() int
+        +getMaxPlayers() int
+        +getMaxPlayTime() int
+        +getMinPlayTime() int
+        +getDifficulty() double
+        +getRank() int
+        +getRating() double
+        +getYearPublished() int
+        +toStringWithInfo(GameData col) String
+        +toString() String
+        +equals(Object obj) boolean
+        +hashCode() int
+    }
+    
+    class ConsoleApp {
+        -Scanner IN
+        -String DEFAULT_FILENAME
+        -Random RND
+        -Scanner current
+        -IGameList gameList
+        -IPlanner planner
+        +ConsoleApp(IGameList gameList, IPlanner planner)
+        +start() void
+        -randomNumber() void
+        -processHelp() void
+        -processFilter() void
+        -printFilterStream(Stream~BoardGame~ games, GameData sortON) void
+        -processListCommands() void
+        -printCurrentList() void
+        -nextCommand() ConsoleText
+        -remainder() String
+        -getInput(String format, Object... args) String
+        -printOutput(String format, Object... output) void
+    }
+    
+    class GameData {
+        <<enumeration>>
+        NAME
+        ID
+        RATING
+        DIFFICULTY
+        RANK
+        MIN_PLAYERS
+        MAX_PLAYERS
+        MIN_TIME
+        MAX_TIME
+        YEAR
+        -String columnName
+        +getColumnName() String
+        +fromColumnName(String columnName) GameData
+        +fromString(String name) GameData
+    }
+    
+    class GamesLoader {
+        -String DELIMITER
+        -GamesLoader()
+        +loadGamesFile(String filename) Set~BoardGame~
+        -toBoardGame(String line, Map~GameData,Integer~ columnMap) BoardGame
+        -processHeader(String header) Map~GameData,Integer~
+    }
+    
+    class Operations {
+        <<enumeration>>
+        EQUALS
+        NOT_EQUALS
+        GREATER_THAN
+        LESS_THAN
+        GREATER_THAN_EQUALS
+        LESS_THAN_EQUALS
+        CONTAINS
+        -String operator
+        +getOperator() String
+        +fromOperator(String operator) Operations
+        +getOperatorFromStr(String str) Operations
+    }
+    
+    class IGameList {
+        <<interface>>
+        +String ADD_ALL
+        +getGameNames() List~String~
+        +clear() void
+        +count() int
+        +saveGame(String filename) void
+        +addToList(String str, Stream~BoardGame~ filtered) void
+        +removeFromList(String str) void
+    }
+    
+    class IPlanner {
+        <<interface>>
+        +filter(String filter) Stream~BoardGame~
+        +filter(String filter, GameData sortOn) Stream~BoardGame~
+        +filter(String filter, GameData sortOn, boolean ascending) Stream~BoardGame~
+        +reset() void
+    }
+    
+    class GameList {
+        -Set~BoardGame~ listOfGames
+        +GameList()
+        +getGameNames() List~String~
+        +clear() void
+        +count() int
+        +saveGame(String filename) void
+        +addToList(String str, Stream~BoardGame~ filtered) void
+        +removeFromList(String str) void
+        -addRange(String range, List~BoardGame~ filteredList) void
+        -removeRange(String range, List~BoardGame~ gamesList) void
+    }
+    
+    class Planner {
+        -Set~BoardGame~ allGames
+        -List~BoardGame~ gamesList
+        +Planner(Set~BoardGame~ games)
+        +filter(String filter) Stream~BoardGame~
+        +filter(String filter, GameData sortOn) Stream~BoardGame~
+        +filter(String filter, GameData sortOn, boolean ascending) Stream~BoardGame~
+        +reset() void
+        -applyFilterCondition(String filterCondition, List~BoardGame~ games) List~BoardGame~
+        -matchesFilter(BoardGame game, GameData filterOn, Operations operator, String value) boolean
+        -matchesStringFilter(String gameValue, Operations operator, String filterValue) boolean
+        -matchesNumberFilter(int gameValue, Operations operator, String filterValue) boolean
+        -matchesDoubleFilter(double gameValue, Operations operator, String filterValue) boolean
+        -sortGames(List~BoardGame~ games, GameData sortOn, boolean ascending) List~BoardGame~
+    }
+    
+    class GameSorter {
+        +sortFilteredGames(GameData sortOn, boolean ascending) Comparator~BoardGame~
+        -getBaseComparator(GameData sortOn) Comparator~BoardGame~
+    }
+```
 
 
 ## (FINAL DESIGN): Reflection/Retrospective

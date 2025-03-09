@@ -1,7 +1,7 @@
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import student.BoardGame;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -39,6 +39,117 @@ public class TestPlanner {
         assertEquals(1, filtered.size());
         assertEquals("Go", filtered.get(0).getName());
     }
-    
 
+    @Test
+    public void testFilterContainsName() {
+        IPlanner planner = new Planner(games);
+        List<BoardGame> filtered = planner.filter("name ~= Go").toList();
+        assertEquals(4, filtered.size()); // Go, Go Fish, golang, GoRami
+    }
+
+    @Test
+    public void testFilterMinPlayers() {
+        IPlanner planner = new Planner(games);
+        List<BoardGame> filtered = planner.filter("minPlayers > 5").toList();
+        assertEquals(3, filtered.size()); // GoRami, Monopoly, Tucano
+    }
+
+    @Test
+    public void testFilterMaxPlayers() {
+        IPlanner planner = new Planner(games);
+        List<BoardGame> filtered = planner.filter("maxPlayers >= 10").toList();
+        assertEquals(3, filtered.size()); // Go Fish, Monopoly, Tucano
+    }
+
+    @Test
+    public void testFilterMaxTime() {
+        IPlanner planner = new Planner(games);
+        List<BoardGame> filtered = planner.filter("maxPlaytime > 100").toList();
+        assertEquals(2, filtered.size()); // Go Fish, Monopoly
+    }
+
+    @Test
+    public void testFilterMinTime() {
+        IPlanner planner = new Planner(games);
+        List<BoardGame> filtered = planner.filter("minPlaytime < 20").toList();
+        assertEquals(1, filtered.size()); // Chess
+    }
+
+    @Test
+    public void testFilterDifficulty() {
+        IPlanner planner = new Planner(games);
+        List<BoardGame> filtered = planner.filter("difficulty <= 5.0").toList();
+        assertEquals(3, filtered.size()); // Go Fish, GoRami, Monopoly
+    }
+
+    @Test
+    public void testFilterRank() {
+        IPlanner planner = new Planner(games);
+        List<BoardGame> filtered = planner.filter("rank < 300").toList();
+        assertEquals(2, filtered.size()); // Go, Go Fish
+    }
+
+    @Test
+    public void testFilterRating() {
+        IPlanner planner = new Planner(games);
+        List<BoardGame> filtered = planner.filter("rating >= 9.0").toList();
+        assertEquals(3, filtered.size()); // 17 days, Chess, golang
+    }
+
+    @Test
+    public void testFilterYear() {
+        IPlanner planner = new Planner(games);
+        List<BoardGame> filtered = planner.filter("year < 2002").toList();
+        assertEquals(2, filtered.size()); // Go, Go Fish
+    }
+
+    @Test
+    public void testFilterMultipleCriteria() {
+        IPlanner planner = new Planner(games);
+        List<BoardGame> filtered = planner.filter("minPlayers >= 2, maxPlayers <= 5").toList();
+        assertEquals(2, filtered.size()); // Chess, Go
+    }
+
+    @Test
+    public void testEmptyFilter() {
+        IPlanner planner = new Planner(games);
+        List<BoardGame> filtered = planner.filter("").toList();
+        assertEquals(games.size(), filtered.size());
+    }
+
+    @Test
+    public void testFilterWithSort() {
+        IPlanner planner = new Planner(games);
+        List<BoardGame> filtered = planner.filter("minPlayers >= 2", GameData.YEAR).toList();
+        assertEquals(7, filtered.size());
+        // Should be sorted by year (ascending)
+        assertEquals(2000, filtered.get(0).getYearPublished());
+        assertEquals(2007, filtered.get(6).getYearPublished());
+    }
+
+    @Test
+    public void testFilterWithSortDescending() {
+        IPlanner planner = new Planner(games);
+        List<BoardGame> filtered = planner.filter("", GameData.RATING, false).toList();
+        assertEquals(8, filtered.size());
+        // Should be sorted by rating (descending)
+        assertEquals(10.0, filtered.get(0).getRating());
+        assertEquals(5.0, filtered.get(7).getRating());
+    }
+
+    @Test
+    public void testReset() {
+        IPlanner planner = new Planner(games);
+        planner.filter("minPlayers > 5");
+        planner.reset();
+        List<BoardGame> afterReset = planner.filter("").toList();
+        assertEquals(games.size(), afterReset.size());
+    }
+
+    @Test
+    public void testInvalidFilter() {
+        IPlanner planner = new Planner(games);
+        List<BoardGame> filtered = planner.filter("invalid filter").toList();
+        assertEquals(games.size(), filtered.size());
+    }
 }
