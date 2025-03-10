@@ -33,7 +33,7 @@ public final class GameSorter {
     private static Comparator<BoardGame> getBaseComparator(GameData sortOn) {
         switch (sortOn) {
             case NAME:
-                return Comparator.comparing(g -> g.getName().toLowerCase()); // 确保忽略大小写
+                return Comparator.comparing(g -> g.getName().toLowerCase());
             case MIN_PLAYERS:
                 return Comparator.comparingInt(BoardGame::getMinPlayers);
             case MAX_PLAYERS:

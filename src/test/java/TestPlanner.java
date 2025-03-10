@@ -12,7 +12,7 @@ import student.GameData;
 
 /**
  * JUnit test for the Planner class.
- * 
+ * <p>
  * Just a sample test to get you started, also using
  * setup to help out. 
  */
@@ -48,17 +48,38 @@ public class TestPlanner {
     }
 
     @Test
+    public void testFilterByNameEquals() {
+        IPlanner planner = new Planner(games);
+        List<BoardGame> filtered = planner.filter("name == Go").toList();
+        assertEquals(1, filtered.size());
+    }
+
+    @Test
     public void testNameGreaterThan() {
         IPlanner planner = new Planner(games);
         List<BoardGame> filtered = planner.filter("name > Go").toList();
-        assertEquals(5, filtered.size());
+        assertEquals(5, filtered.size()); // Go Fish, golang, GoRami, Monopoly, Tucano
     }
 
     @Test
     public void testNameLessThan() {
         IPlanner planner = new Planner(games);
         List<BoardGame> filtered = planner.filter("name < Go").toList();
-        assertEquals(2, filtered.size());
+        assertEquals(2, filtered.size()); // 17 days, Chess
+    }
+
+    @Test
+    public void testNameGreaterThanOrEqual() {
+        IPlanner planner = new Planner(games);
+        List<BoardGame> filtered = planner.filter("name >= Go").toList();
+        assertEquals(6, filtered.size()); // Go, Go Fish, golang, GoRami, Monopoly, Tucano
+    }
+
+    @Test
+    public void testNameLessThanOrEqual() {
+        IPlanner planner = new Planner(games);
+        List<BoardGame> filtered = planner.filter("name <= Go").toList();
+        assertEquals(3, filtered.size()); // 17 days, Chess, Go
     }
 
     @Test
@@ -76,14 +97,14 @@ public class TestPlanner {
     }
 
     @Test
-    public void testFilterMaxTime() {
+    public void testFilterMaxPlayTime() {
         IPlanner planner = new Planner(games);
         List<BoardGame> filtered = planner.filter("maxPlaytime > 100").toList();
         assertEquals(2, filtered.size()); // Go Fish, Monopoly
     }
 
     @Test
-    public void testFilterMinTime() {
+    public void testFilterMinPlayTime() {
         IPlanner planner = new Planner(games);
         List<BoardGame> filtered = planner.filter("minPlaytime < 20").toList();
         assertEquals(1, filtered.size()); // Chess
@@ -118,7 +139,7 @@ public class TestPlanner {
     }
 
     @Test
-    public void testFilterMultipleCriteria() {
+    public void testFilterMultiple() {
         IPlanner planner = new Planner(games);
         List<BoardGame> filtered = planner.filter("minPlayers >= 2, maxPlayers <= 5").toList();
         assertEquals(2, filtered.size()); // Chess, Go
@@ -132,11 +153,10 @@ public class TestPlanner {
     }
 
     @Test
-    public void testFilterWithSort() {
+    public void testFilterWithSortAscending() {
         IPlanner planner = new Planner(games);
         List<BoardGame> filtered = planner.filter("minPlayers >= 2", GameData.YEAR).toList();
         assertEquals(7, filtered.size());
-        // Should be sorted by year (ascending)
         assertEquals(2000, filtered.get(0).getYearPublished());
         assertEquals(2007, filtered.get(6).getYearPublished());
     }
@@ -146,7 +166,6 @@ public class TestPlanner {
         IPlanner planner = new Planner(games);
         List<BoardGame> filtered = planner.filter("", GameData.RATING, false).toList();
         assertEquals(8, filtered.size());
-        // Should be sorted by rating (descending)
         assertEquals(10.0, filtered.get(0).getRating());
         assertEquals(5.0, filtered.get(7).getRating());
     }

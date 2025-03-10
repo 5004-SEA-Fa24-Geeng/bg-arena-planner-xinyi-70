@@ -26,8 +26,6 @@ public class GameList implements IGameList {
                 .map(BoardGame::getName)
                 .sorted(String.CASE_INSENSITIVE_ORDER)
                 .collect(Collectors.toList());
-        //List<String> listVersionOfGames = List.copyOf(listOfGames);
-        //return listVersionOfGames;
     }
 
     @Override
@@ -98,10 +96,6 @@ public class GameList implements IGameList {
                 .orElseThrow(() -> new IllegalArgumentException("Game not found: " + gameName));
 
         listOfGames.add(matchingGame);
-
-        //list<BoardGame> filteredList = filtered.toList();
-        //BoardGame toAdd = filteredList.get(Integer.parseInt(str));
-        //listOfGames.add(toAdd.getName());
     }
 
     /**
@@ -212,7 +206,7 @@ public class GameList implements IGameList {
             List<BoardGame> toRemove = gamesList.stream()
                     .skip(start - 1)
                     .limit(end - start + 1)
-                    .collect(Collectors.toList());
+                    .toList();
 
             listOfGames.removeAll(toRemove);
         } catch (NumberFormatException e) {

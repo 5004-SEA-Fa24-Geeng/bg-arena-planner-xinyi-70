@@ -9,6 +9,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * JUnit test for the GameList class.
@@ -16,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class GameListTest {
     private IGameList gameList;
     private static Set<BoardGame> games;
+    private final String testFilename = "test_games_list.txt";
 
     @BeforeAll
     public static void setupAll() {
@@ -126,4 +130,13 @@ public class GameListTest {
         assertEquals(0, gameList.count());
     }
 
+    @Test
+    public void testSaveGame() throws IOException {
+        gameList.addToList("1-3", games.stream());
+        gameList.saveGame(testFilename);
+        Path path = Path.of(testFilename);
+        List<String> lines = Files.readAllLines(path);
+        assertEquals(3, lines.size());
+        Files.delete(path);
+    }
 }
