@@ -65,12 +65,37 @@ public class Planner implements IPlanner {
      * @return The filtered list of games
      */
     private List<BoardGame> applyFilterCondition(String filterCondition, List<BoardGame> games) {
+        if (filterCondition.contains("~=")) {
+            String[] parts = filterCondition.split("~=", 2);
+            if (parts.length == 2) {
+                String columnName = parts[0].trim();
+                String filterValue = parts[1].trim();
+
+                GameData filterOn;
+                try {
+                    filterOn = GameData.fromString(columnName);
+                } catch (IllegalArgumentException e) {
+                    return games;
+                }
+                
+                if (filterOn == GameData.NAME) {
+                    List<BoardGame> result = new ArrayList<>();
+                    for (BoardGame game : games) {
+                        if (game.getName().toLowerCase().contains(filterValue.toLowerCase())) {
+                            result.add(game);
+                        }
+                    }
+                    return result;
+                }
+            }
+        }
+
         Operations operator = Operations.getOperatorFromStr(filterCondition);
         if (operator == null) {
             return games;
         }
 
-        String[] parts = filterCondition.split(Pattern.quote(operator.getOperator()));
+        String[] parts = filterCondition.split(Pattern.quote(operator.getOperator()), 2);
         if (parts.length != 2) {
             return games;
         }
@@ -137,6 +162,10 @@ public class Planner implements IPlanner {
      * @return True if the value matches the filter
      */
     private boolean matchesStringFilter(String gameValue, Operations operator, String filterValue) {
+        if (gameValue == null) {
+            return operator == Operations.NOT_EQUALS && filterValue != null;
+        }
+
         switch (operator) {
             case EQUALS:
                 return gameValue.equalsIgnoreCase(filterValue);
