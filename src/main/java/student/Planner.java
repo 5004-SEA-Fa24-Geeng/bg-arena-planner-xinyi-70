@@ -41,18 +41,18 @@ public class Planner implements IPlanner {
             reset();
         }
 
-        // Apply filters if provided
         if (filter != null && !filter.isEmpty()) {
-            // Split filters by comma
-            String[] filterConditions = filter.replaceAll("\\s+", "").split(",");
+            // Only trim the filter string but preserve spaces in values
+            String trimmedFilter = filter.trim();
+            String[] filterConditions = trimmedFilter.split(",");
 
-            // Apply each filter condition
-            for (String filterCondition : filterConditions) {
-                gamesList = applyFilterCondition(filterCondition, gamesList);
+            for (String condition : filterConditions) {
+                if (!condition.trim().isEmpty()) {
+                    gamesList = applyFilterCondition(condition.trim(), gamesList);
+                }
             }
         }
 
-        // Return sorted stream
         gamesList = sortGames(gamesList, sortOn, ascending);
         return gamesList.stream();
     }
@@ -65,24 +65,54 @@ public class Planner implements IPlanner {
      * @return The filtered list of games
      */
     private List<BoardGame> applyFilterCondition(String filterCondition, List<BoardGame> games) {
+        if (filterCondition.toLowerCase().contains("name") && filterCondition.contains("~=")) {
+        // Split using ~= to properly handle the contains operator
+            String[] parts = filterCondition.split("~=", 2);
+            if (parts.length == 2) {
+                String columnName = parts[0].trim();
+                String filterValue = parts[1].trim();
+
+                try {
+                    GameData filterOn = GameData.fromString(columnName);
+                    if (filterOn == GameData.NAME) {
+                        List<BoardGame> result = new ArrayList<>();
+                        for (BoardGame game : games) {
+                            if (game.getName().toLowerCase().contains(filterValue.toLowerCase())) {
+                                result.add(game);
+                            }
+                        }
+                        return result;
+                    }
+                } catch (IllegalArgumentException e) {
+                    return games;
+                }
+            }
+        }
+
         Operations operator = Operations.getOperatorFromStr(filterCondition);
         if (operator == null) {
             return games;
         }
 
-        String[] parts = filterCondition.split(Pattern.quote(operator.getOperator()));
+        String[] parts;
+        if (operator == Operations.CONTAINS) {
+            parts = filterCondition.split("~=", 2);
+        } else {
+            parts = filterCondition.split(Pattern.quote(operator.getOperator()));
+        }
+
         if (parts.length != 2) {
             return games;
         }
 
         GameData filterOn;
         try {
-            filterOn = GameData.fromString(parts[0]);
+            filterOn = GameData.fromString(parts[0].trim());
         } catch (IllegalArgumentException e) {
             return games;
         }
 
-        String value = parts[1];
+        String value = parts[1].trim();
 
         List<BoardGame> result = new ArrayList<>();
         for (BoardGame game : games) {
@@ -137,13 +167,17 @@ public class Planner implements IPlanner {
      * @return True if the value matches the filter
      */
     private boolean matchesStringFilter(String gameValue, Operations operator, String filterValue) {
+        if (gameValue == null) {
+            return operator == Operations.NOT_EQUALS && filterValue != null;
+        }
+
         switch (operator) {
             case EQUALS:
                 return gameValue.equalsIgnoreCase(filterValue);
             case NOT_EQUALS:
                 return !gameValue.equalsIgnoreCase(filterValue);
             case CONTAINS:
-                return gameValue.toLowerCase().contains(filterValue.toLowerCase().trim());
+                return gameValue.toLowerCase().contains(filterValue.toLowerCase());
             default:
                 return false;
         }
