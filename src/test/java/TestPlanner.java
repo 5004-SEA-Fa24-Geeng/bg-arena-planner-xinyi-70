@@ -48,6 +48,20 @@ public class TestPlanner {
     }
 
     @Test
+    public void testNameGreaterThan() {
+        IPlanner planner = new Planner(games);
+        List<BoardGame> filtered = planner.filter("name > Go").toList();
+        assertEquals(5, filtered.size());
+    }
+
+    @Test
+    public void testNameLessThan() {
+        IPlanner planner = new Planner(games);
+        List<BoardGame> filtered = planner.filter("name < Go").toList();
+        assertEquals(2, filtered.size());
+    }
+
+    @Test
     public void testFilterMinPlayers() {
         IPlanner planner = new Planner(games);
         List<BoardGame> filtered = planner.filter("minPlayers > 5").toList();

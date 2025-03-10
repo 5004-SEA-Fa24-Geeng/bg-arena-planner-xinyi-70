@@ -16,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class GameListTest {
     private IGameList gameList;
     private static Set<BoardGame> games;
-    private String testFilename = "test_games_list.txt";
 
     @BeforeAll
     public static void setupAll() {

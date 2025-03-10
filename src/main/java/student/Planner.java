@@ -178,6 +178,14 @@ public class Planner implements IPlanner {
                 return !gameValue.equalsIgnoreCase(filterValue);
             case CONTAINS:
                 return gameValue.toLowerCase().contains(filterValue.toLowerCase());
+            case GREATER_THAN:
+                return gameValue.compareToIgnoreCase(filterValue) > 0;
+            case LESS_THAN:
+                return gameValue.compareToIgnoreCase(filterValue) < 0;
+            case GREATER_THAN_EQUALS:
+                return gameValue.compareToIgnoreCase(filterValue) >= 0;
+            case LESS_THAN_EQUALS:
+                return gameValue.compareToIgnoreCase(filterValue) <= 0;
             default:
                 return false;
         }
