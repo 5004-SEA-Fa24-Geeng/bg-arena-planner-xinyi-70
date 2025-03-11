@@ -5,7 +5,7 @@ Github Account name: xinyi-70
 
 Link to Assignment on Github: https://github.com/5004-SEA-Fa24-Geeng/bg-arena-planner-xinyi-70.git
 
-How many hours did it take you to complete this assignment (estimate)? 30hrs
+How many hours did it take you to complete this assignment (estimate)? 35hrs
 
 Did you collaborate with any other students/TAs/Professors? If so, tell us who and in what
 capacity.
