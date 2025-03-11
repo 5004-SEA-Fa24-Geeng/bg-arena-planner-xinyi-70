@@ -252,11 +252,11 @@ public class GameList implements IGameList {
                 throw new IllegalArgumentException("Invalid range (start > end): " + range);
             }
 
-            List<BoardGame> toRemove = gamesList.stream()
-                    .skip(start - 1)
-                    .limit(end - start + 1)
-                    .toList();
-
+            List<BoardGame> toRemove = new ArrayList<>();
+            for (int i = start - 1; i < end; i++) {
+                toRemove.add(gamesList.get(i));
+            }
+            
             listOfGames.removeAll(toRemove);
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Invalid range numbers: " + range);
