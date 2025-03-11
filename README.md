@@ -14,7 +14,10 @@ capacity.
   
 Did you use any external resources (you do not have to cite in class material)? (Cite them below)
 
-* one row per resource
+* Stream empty() in Java with Examples. https://www.geeksforgeeks.org/stream-empty-java-examples/
+* Guide to Java Comparator.comparing(). https://www.baeldung.com/java-8-comparator-comparing
+* Java Program to Write into a File. http://geeksforgeeks.org/java-program-to-write-into-a-file/
+* How to Read and Write Files Using the New I/O (NIO.2) API in Java? https://www.geeksforgeeks.org/read-and-write-files-using-the-new-i-o-nio-2-api-in-java/
 
 
 (Optional) What was your favorite part of the assignment?

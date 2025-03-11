@@ -256,7 +256,7 @@ public class GameList implements IGameList {
             for (int i = start - 1; i < end; i++) {
                 toRemove.add(gamesList.get(i));
             }
-            
+
             listOfGames.removeAll(toRemove);
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Invalid range numbers: " + range);
