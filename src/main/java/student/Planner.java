@@ -122,7 +122,21 @@ public class Planner implements IPlanner {
         if (operator == Operations.CONTAINS) {
             parts = filterCondition.split("~=", 2);
         } else {
-            parts = filterCondition.split(Pattern.quote(operator.getOperator()));
+            String opStr = operator.getOperator();
+            if (opStr.equals(">") || opStr.equals("<") || opStr.equals("=")) {
+                parts = filterCondition.split(opStr, 2);
+                if (parts.length != 2) {
+                    if (opStr.equals(">") && filterCondition.contains(">=")) {
+                        parts = filterCondition.split(">=", 2);
+                    } else if (opStr.equals("<") && filterCondition.contains("<=")) {
+                        parts = filterCondition.split("<=", 2);
+                    } else if (opStr.equals("=") && filterCondition.contains("==")) {
+                        parts = filterCondition.split("==", 2);
+                    }
+                }
+            } else {
+                parts = filterCondition.split(opStr, 2);
+            }
         }
 
         if (parts.length != 2) {

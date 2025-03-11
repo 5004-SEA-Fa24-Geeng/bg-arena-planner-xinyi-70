@@ -6,7 +6,6 @@ import java.util.stream.Stream;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.ArrayList;
-import java.util.Comparator;
 
 
 public class GameList implements IGameList {
