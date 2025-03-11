@@ -50,7 +50,8 @@ public class Planner implements IPlanner {
     /**
      * Filters and sorts the list of board games based on the given criteria.
      *
-     * @param filter The filter string containing conditions separated by commas. If null or empty, no filtering is applied.
+     * @param filter The filter string containing conditions separated by commas.
+     *               If null or empty, no filtering is applied.
      * @param sortOn The column to sort the results on.
      * @param ascending If true, sorts in ascending order; otherwise, sorts in descending order.
      * @return A stream of board games that match the filter criteria and are sorted accordingly.

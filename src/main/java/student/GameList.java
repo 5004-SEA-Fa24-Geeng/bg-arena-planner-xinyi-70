@@ -66,7 +66,7 @@ public class GameList implements IGameList {
         try {
             java.nio.file.Files.write(java.nio.file.Path.of(filename), gameNames);
         } catch (java.io.IOException e) {
-            throw new IllegalArgumentException("Error writing to file: " + e.getMessage());
+            System.err.println("Error writing to file: " + e.getMessage());
         }
     }
 
