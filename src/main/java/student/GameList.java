@@ -87,7 +87,7 @@ public class GameList implements IGameList {
         str = str.trim().toLowerCase();
 
         // Convert filtered stream to list for multiple operations
-        List<BoardGame> filteredList = filtered.toList();
+        List<BoardGame> filteredList = filtered.collect(Collectors.toList());
 
         // If no games found
         if (filteredList.isEmpty()) {
@@ -119,11 +119,17 @@ public class GameList implements IGameList {
         }
 
         // Try to find game by name using stream
-        final String gameName = str; // Create a final copy for use in lambda
-        BoardGame matchingGame = filteredList.stream()
-                .filter(game -> game.getName().equalsIgnoreCase(gameName))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Game not found: " + gameName));
+        BoardGame matchingGame = null;
+        for (BoardGame game : filteredList) {
+            if (game.getName().equalsIgnoreCase(str)) {
+                matchingGame = game;
+                break;
+            }
+        }
+
+        if (matchingGame == null) {
+            throw new IllegalArgumentException("Game not found: " + str);
+        }
 
         listOfGames.add(matchingGame);
     }
@@ -206,11 +212,17 @@ public class GameList implements IGameList {
         }
 
         // Try to find game by name using stream
-        final String gameName = str; // Create a final copy for use in lambda
-        BoardGame matchingGame = listOfGames.stream()
-                .filter(game -> game.getName().equalsIgnoreCase(gameName))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Game not found: " + gameName));
+        BoardGame matchingGame = null;
+        for (BoardGame game : listOfGames) {
+            if (game.getName().equalsIgnoreCase(str)) { // 直接使用 str
+                matchingGame = game;
+                break;
+            }
+        }
+
+        if (matchingGame == null) {
+            throw new IllegalArgumentException("Game not found: " + str); // 使用 str
+        }
 
         listOfGames.remove(matchingGame);
     }
