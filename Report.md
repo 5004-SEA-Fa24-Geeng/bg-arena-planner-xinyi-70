@@ -109,7 +109,11 @@ the current layout.
 Post a copy of the run with the updated languages below this. Use three back ticks (```) to create a code block. 
 
 ```text
+<entry key="welcome">
+*******Bienvenido al Planificador de BoardGame Arena.*******
+</entry>
 // your consoles output here
+*******Bienvenido al Planificador de BoardGame Arena.*******
 ```
 
 Now, thinking about localization - we have the question of why does it matter? The obvious
@@ -120,3 +124,15 @@ various spoken languages around the world? What about areas with internet access
 
 
 As a reminder, deeper thinking questions are meant to require some research and to be answered in a paragraph for with references. The goal is to open up some of the discussion topics in CS, so you are better informed going into industry. 
+
+In addition to market share, I think localization is so important because localization ensures that technology is not limited to those who use the mainstream language (English), thereby promoting digital inclusion for different groups of people, and localization provides a better user experience and increases usage. CSA research shows that 65% of people prefer content in their language, 73% of people want product reviews in their language, and 40% of them will not buy in other languages.[^1]
+
+According to data from the International Communication and Language School (ICLS), the most spoken languages (consider number of native speakers) globally include Mandarin Chinese (941 million speakers), Spanish (486 million), English (380 million), and Hindi (345 million). [^2] This diverse linguistic landscape presents a stark contrast to the predominantly English-centric nature of software development.
+
+As developers, we should work with localization experts, hire professional translators who are familiar with the technical field, conduct localization testing before the product is launched, and work with native speakers to ensure language quality.
+
+## References
+
+[^1]: Can't Read, Won't Buy in Figures: 2020. https://csa-research.com/Featured-Content/For-Global-Enterprises/Global-Growth/CRWB-Series/CRWB-B2C
+
+[^2]: Most spoken languages in the world: 2024. https://www.icls.edu/blog/most-spoken-languages-in-the-world

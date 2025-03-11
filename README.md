@@ -18,6 +18,9 @@ Did you use any external resources (you do not have to cite in class material)? 
 * Guide to Java Comparator.comparing(). https://www.baeldung.com/java-8-comparator-comparing
 * Java Program to Write into a File. http://geeksforgeeks.org/java-program-to-write-into-a-file/
 * How to Read and Write Files Using the New I/O (NIO.2) API in Java? https://www.geeksforgeeks.org/read-and-write-files-using-the-new-i-o-nio-2-api-in-java/
+* Can't Read, Won't Buy in Figures: 2020. https://csa-research.com/Featured-Content/For-Global-Enterprises/Global-Growth/CRWB-Series/CRWB-B2C
+* Most spoken languages in the world: 2024. https://www.icls.edu/blog/most-spoken-languages-in-the-world
+
 
 
 (Optional) What was your favorite part of the assignment?
