@@ -20,6 +20,11 @@ public class GameList implements IGameList {
         this.listOfGames = new HashSet<>();
     }
 
+    /**
+     * Gets the contents of the list as a list of names (Strings) in ascending order.
+     *
+     * @return the list of game names in ascending order ignoring case.
+     */
     @Override
     public List<String> getGameNames() {
         return listOfGames.stream()
@@ -28,26 +33,52 @@ public class GameList implements IGameList {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Removes all games in the list.
+     */
     @Override
     public void clear() {
         listOfGames.clear();
     }
 
+    /**
+     * Returns the number of games in the list.
+     *
+     * @return the number of games in the list.
+     */
     @Override
     public int count() {
         return listOfGames.size();
     }
 
+    /**
+     * Saves the list of games to a file.
+     * <p>
+     * The contents of the file will be each game name on a new line. It will overwrite the file if it already exists.
+     * <p>
+     * Saves them in the same order as getGameNames().
+     *
+     * @param filename The name of the file to save the list to.
+     */
     @Override
     public void saveGame(String filename) {
         List<String> gameNames = getGameNames();
         try {
             java.nio.file.Files.write(java.nio.file.Path.of(filename), gameNames);
         } catch (java.io.IOException e) {
-            System.err.println("Error writing to file: " + e.getMessage());
+            throw new IllegalArgumentException("Error writing to file: " + e.getMessage());
         }
     }
 
+    /**
+     * Adds a game or games to the list based on the given input string.
+     * <p>
+     * If the input string is invalid, an {@code IllegalArgumentException} will be thrown.
+     *
+     * @param str the string to parse and add games to the list.
+     * @param filtered the filtered stream of games to use as a reference for adding.
+     * @throws IllegalArgumentException if the string is empty, out of range, or invalid.
+     */
     @Override
     public void addToList(String str, Stream<BoardGame> filtered) throws IllegalArgumentException {
         if (str == null || str.trim().isEmpty()) {
@@ -65,7 +96,7 @@ public class GameList implements IGameList {
         }
 
         // Check if we need to add all games
-        if (str.equals(ADD_ALL)) {
+        if (str.equals(IGameList.ADD_ALL)) {
             listOfGames.addAll(filteredList);
             return;
         }
@@ -131,6 +162,14 @@ public class GameList implements IGameList {
         }
     }
 
+    /**
+     * Removes a game or games from the list based on the given input string.
+     * <p>
+     * If the input string is invalid or out of range, an {@code IllegalArgumentException} will be thrown.
+     *
+     * @param str the string to parse and remove games from the list.
+     * @throws IllegalArgumentException if the string is empty, out of range, or invalid.
+     */
     @Override
     public void removeFromList(String str) throws IllegalArgumentException {
         if (str == null || str.trim().isEmpty()) {
@@ -140,7 +179,7 @@ public class GameList implements IGameList {
         str = str.trim().toLowerCase();
 
         // Check if we need to remove all games
-        if (str.equals(ADD_ALL)) {
+        if (str.equals(IGameList.ADD_ALL)) {
             clear();
             return;
         }
@@ -202,7 +241,6 @@ public class GameList implements IGameList {
                 throw new IllegalArgumentException("Invalid range (start > end): " + range);
             }
 
-            // Get games to remove using range indices and stream operations
             List<BoardGame> toRemove = gamesList.stream()
                     .skip(start - 1)
                     .limit(end - start + 1)

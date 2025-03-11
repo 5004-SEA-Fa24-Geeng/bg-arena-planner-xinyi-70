@@ -1,6 +1,5 @@
 package student;
 
-
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -25,36 +24,60 @@ public class Planner implements IPlanner {
         reset();
     }
 
+    /**
+     * Filters the board games by the given filter string and sorts them by name in ascending order.
+     *
+     * @param filter The filter to apply to the board games.
+     * @return A stream of board games that match the filter, sorted by name in ascending order.
+     */
     @Override
     public Stream<BoardGame> filter(String filter) {
         return filter(filter, GameData.NAME, true);
     }
 
+    /**
+     * Filters the board games by the given filter string and sorts them by the specified column in ascending order.
+     *
+     * @param filter The filter to apply to the board games.
+     * @param sortOn The column to sort the results on.
+     * @return A stream of board games that match the filter, sorted by the specified column in ascending order.
+     */
     @Override
     public Stream<BoardGame> filter(String filter, GameData sortOn) {
         return filter(filter, sortOn, true);
     }
 
+    /**
+     * Filters and sorts the list of board games based on the given criteria.
+     *
+     * @param filter The filter string containing conditions separated by commas. If null or empty, no filtering is applied.
+     * @param sortOn The column to sort the results on.
+     * @param ascending If true, sorts in ascending order; otherwise, sorts in descending order.
+     * @return A stream of board games that match the filter criteria and are sorted accordingly.
+     */
     @Override
     public Stream<BoardGame> filter(String filter, GameData sortOn, boolean ascending) {
-        if (gamesList == null) {
+        if (gamesList == null || gamesList.isEmpty()) {
             reset();
         }
 
+        List<BoardGame> filteredGames = new ArrayList<>(gamesList);
+
         if (filter != null && !filter.isEmpty()) {
-            // Only trim the filter string but preserve spaces in values
             String trimmedFilter = filter.trim();
             String[] filterConditions = trimmedFilter.split(",");
 
             for (String condition : filterConditions) {
                 if (!condition.trim().isEmpty()) {
-                    gamesList = applyFilterCondition(condition.trim(), gamesList);
+                    filteredGames = applyFilterCondition(condition.trim(), filteredGames);
+                    if (filteredGames.isEmpty()) {
+                        return Stream.empty();
+                    }
                 }
             }
         }
 
-        gamesList = sortGames(gamesList, sortOn, ascending);
-        return gamesList.stream();
+        return sortGames(filteredGames, sortOn, ascending).stream();
     }
 
     /**

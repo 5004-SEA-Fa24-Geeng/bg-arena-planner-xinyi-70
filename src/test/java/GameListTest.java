@@ -19,7 +19,6 @@ import java.nio.file.Path;
 public class GameListTest {
     private IGameList gameList;
     private static Set<BoardGame> games;
-    private final String testFilename = "test_games_list.txt";
 
     @BeforeAll
     public static void setupAll() {
@@ -81,22 +80,20 @@ public class GameListTest {
     public void testAddDuplicateGames() {
         gameList.addToList("Chess", games.stream());
         gameList.addToList("Chess", games.stream());
-        assertEquals(1, gameList.count()); // 不应添加重复
+        assertEquals(1, gameList.count());
     }
 
     @Test
     public void testAddInvalidRange() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            gameList.addToList("5-1", games.stream());
-        });
+        Exception exception = assertThrows(IllegalArgumentException.class,
+                () -> gameList.addToList("5-1", games.stream()));
         assertTrue(exception.getMessage().contains("Invalid range"));
     }
 
     @Test
     public void testAddNegativeIndex() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            gameList.addToList("-1", games.stream());
-        });
+        assertThrows(IllegalArgumentException.class,
+                () -> gameList.addToList("-1", games.stream()));
     }
 
     @Test
@@ -117,9 +114,8 @@ public class GameListTest {
     @Test
     public void testRemoveNonExistentGame() {
         gameList.addToList("all", games.stream());
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            gameList.removeFromList("NonExistentGame");
-        });
+        Exception exception = assertThrows(IllegalArgumentException.class,
+                () -> gameList.removeFromList("NonExistentGame"));
         assertTrue(exception.getMessage().contains("Game not found"));
     }
 
@@ -132,6 +128,7 @@ public class GameListTest {
 
     @Test
     public void testSaveGame() throws IOException {
+        String testFilename = "test_games_list.txt";
         gameList.addToList("1-3", games.stream());
         gameList.saveGame(testFilename);
         Path path = Path.of(testFilename);
