@@ -6,6 +6,9 @@ code as it is meant to help you understand some of the concepts.
 ## Technical Questions
 
 1. What is the difference between == and .equals in java? Provide a code example of each, where they would return different results for an object. Include the code snippet using the hash marks (```) to create a code block.
+
+   `==` compares object references (memory addresses) to see if two references point to the exact same object.
+   `.equals()` compares the content or values of objects.
    ```java
    // your code here
    

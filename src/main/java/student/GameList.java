@@ -29,7 +29,7 @@ public class GameList implements IGameList {
     public List<String> getGameNames() {
         return listOfGames.stream()
                 .map(BoardGame::getName)
-                .sorted(String.CASE_INSENSITIVE_ORDER)
+                .sorted((s1, s2) -> s1.toLowerCase().compareTo(s2.toLowerCase()))
                 .collect(Collectors.toList());
     }
 
@@ -186,7 +186,7 @@ public class GameList implements IGameList {
 
         // Get the current list of games
         List<BoardGame> gamesList = new ArrayList<>(listOfGames);
-        gamesList.sort(Comparator.comparing(BoardGame::getName, String.CASE_INSENSITIVE_ORDER));
+        gamesList.sort((g1, g2) -> g1.getName().toLowerCase().compareTo(g2.getName().toLowerCase()));
 
         // Check if we're removing a range
         if (str.contains("-")) {
